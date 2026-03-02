@@ -1,0 +1,1 @@
+The branch for auto-generated badges.
