@@ -1,13 +1,14 @@
 package com.rayvion.engine.core.system.dependency;
 
+import com.rayvion.engine.core.system.descriptor.SystemDescriptor;
 import com.rayvion.engine.core.system.trait.SystemTraitRequirement;
 
 public record SystemDependency(
-        SystemTraitRequirement trait,
+        SystemTraitRequirement traitRequirement,
         RequirementLevel requirementLevel
 ) {
     /**
-     * Enum representing the level of requirement for a specific dependency or trait.
+     * Enum representing the level of requirement for a specific dependency or traitRequirement.
      * It indicates whether the dependency is mandatory or optional.
      */
     public enum RequirementLevel {
@@ -16,5 +17,9 @@ public record SystemDependency(
          */
         REQUIRED,
         OPTIONAL
+    }
+
+    public boolean isSatisfiedBy(SystemDescriptor systemDescriptor) {
+        return systemDescriptor.provides().stream().anyMatch(traitRequirement::isSatisfiedBy);
     }
 }

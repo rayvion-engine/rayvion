@@ -2,4 +2,10 @@ package com.rayvion.engine.core.system.trait;
 
 import com.github.zafarkhaja.semver.Version;
 
-public record SystemTraitRequirement(String id, Version version) { }
+import java.util.function.Predicate;
+
+public record SystemTraitRequirement(String id, Predicate<Version> version) {
+    public boolean isSatisfiedBy(SystemTraitCoordinate coordinate) {
+        return coordinate.id().equals(id) && coordinate.version().satisfies(version);
+    }
+}
