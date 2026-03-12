@@ -1,4 +1,5 @@
 rootProject.name = "rayvion"
 
-include("core")
+include("system")
 include("commons")
+include("system-manager")
