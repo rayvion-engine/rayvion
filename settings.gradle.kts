@@ -1,5 +1,7 @@
 rootProject.name = "rayvion"
 
-include("system")
 include("commons")
+include("system")
 include("system-manager")
+include("entity")
+include("entity-impl")

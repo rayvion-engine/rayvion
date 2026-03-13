@@ -6,9 +6,7 @@ plugins {
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    api("com.github.zafarkhaja:java-semver:0.10.2")
-
-    implementation(project(":commons"))
+    api(project(":system"))
 
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
