@@ -196,11 +196,124 @@ class SystemManagerTest {
         return new SystemDependency(requirement, level);
     }
 
+    @Test
+    @DisplayName("Should remove a system with no dependencies")
+    void testRemoveSystemWithNoDependencies() {
+        MockSystem system = new MockSystem("test-system", Set.of(), Set.of());
+
+        systemManager.addSystem(system);
+        assertDoesNotThrow(() -> systemManager.removeSystem(system));
+    }
+
+    @Test
+    @DisplayName("Should notify dependent systems when removing a system")
+    void testRemoveSystemNotifiesDependents() {
+        SystemTraitCoordinate trait = createTrait("trait", "1.0.0");
+
+        MockSystem provider = new MockSystem("provider", Set.of(), Set.of(trait));
+        MockSystem consumer = new MockSystem("consumer",
+            Set.of(createDependency(trait, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+
+        systemManager.addSystem(provider);
+        systemManager.addSystem(consumer);
+        systemManager.removeSystem(provider);
+
+        assertEquals(1, consumer.getDependencyRemovedCount());
+        assertTrue(consumer.getRemovedDependencies().contains(provider));
+    }
+
+    @Test
+    @DisplayName("Should notify multiple dependent systems when removing a system")
+    void testRemoveSystemNotifiesMultipleDependents() {
+        SystemTraitCoordinate trait = createTrait("trait", "1.0.0");
+
+        MockSystem provider = new MockSystem("provider", Set.of(), Set.of(trait));
+        MockSystem consumer1 = new MockSystem("consumer1",
+            Set.of(createDependency(trait, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+        MockSystem consumer2 = new MockSystem("consumer2",
+            Set.of(createDependency(trait, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+
+        systemManager.addSystem(provider);
+        systemManager.addSystem(consumer1);
+        systemManager.addSystem(consumer2);
+        systemManager.removeSystem(provider);
+
+        assertEquals(1, consumer1.getDependencyRemovedCount());
+        assertEquals(1, consumer2.getDependencyRemovedCount());
+        assertTrue(consumer1.getRemovedDependencies().contains(provider));
+        assertTrue(consumer2.getRemovedDependencies().contains(provider));
+    }
+
+    @Test
+    @DisplayName("Should not notify systems that don't depend on the removed system")
+    void testRemoveSystemDoesNotNotifyIndependentSystems() {
+        SystemTraitCoordinate trait1 = createTrait("trait1", "1.0.0");
+        SystemTraitCoordinate trait2 = createTrait("trait2", "1.0.0");
+
+        MockSystem provider1 = new MockSystem("provider1", Set.of(), Set.of(trait1));
+        MockSystem provider2 = new MockSystem("provider2", Set.of(), Set.of(trait2));
+        MockSystem consumer = new MockSystem("consumer",
+            Set.of(createDependency(trait2, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+
+        systemManager.addSystem(provider1);
+        systemManager.addSystem(provider2);
+        systemManager.addSystem(consumer);
+        systemManager.removeSystem(provider1);
+
+        assertEquals(0, consumer.getDependencyRemovedCount());
+        assertEquals(0, provider2.getDependencyRemovedCount());
+    }
+
+    @Test
+    @DisplayName("Should handle removing a system that has dependencies")
+    void testRemoveSystemThatHasDependencies() {
+        SystemTraitCoordinate trait = createTrait("trait", "1.0.0");
+
+        MockSystem provider = new MockSystem("provider", Set.of(), Set.of(trait));
+        MockSystem consumer = new MockSystem("consumer",
+            Set.of(createDependency(trait, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+
+        systemManager.addSystem(provider);
+        systemManager.addSystem(consumer);
+        systemManager.removeSystem(consumer);
+
+        assertEquals(0, provider.getDependencyRemovedCount());
+        assertEquals(0, consumer.getDependencyRemovedCount());
+    }
+
+    @Test
+    @DisplayName("Should handle removing and re-adding the same system")
+    void testRemoveAndReaddSystem() {
+        SystemTraitCoordinate trait = createTrait("trait", "1.0.0");
+
+        MockSystem provider = new MockSystem("provider", Set.of(), Set.of(trait));
+        MockSystem consumer = new MockSystem("consumer",
+            Set.of(createDependency(trait, SystemDependency.RequirementLevel.REQUIRED)),
+            Set.of());
+
+        systemManager.addSystem(provider);
+        systemManager.addSystem(consumer);
+        assertEquals(1, consumer.getDependencyAddedCount());
+
+        systemManager.removeSystem(provider);
+        assertEquals(1, consumer.getDependencyRemovedCount());
+
+        systemManager.addSystem(provider);
+        assertEquals(2, consumer.getDependencyAddedCount());
+    }
+
     // Mock System implementation for testing
     private static class MockSystem implements System {
         private final SystemDescriptor descriptor;
         private final Set<System> addedDependencies = new HashSet<>();
+        private final Set<System> removedDependencies = new HashSet<>();
         private int dependencyAddedCount = 0;
+        private int dependencyRemovedCount = 0;
 
         public MockSystem(String name, Set<SystemDependency> dependencies, Set<SystemTraitCoordinate> provides) {
             this.descriptor = new SystemDescriptor(
@@ -222,6 +335,12 @@ class SystemManagerTest {
         }
 
         @Override
+        public void onDependencyRemoved(System dependency) {
+            removedDependencies.add(dependency);
+            dependencyRemovedCount++;
+        }
+
+        @Override
         public void init() {
             // Not used in these tests
         }
@@ -230,8 +349,16 @@ class SystemManagerTest {
             return dependencyAddedCount;
         }
 
+        public int getDependencyRemovedCount() {
+            return dependencyRemovedCount;
+        }
+
         public Set<System> getAddedDependencies() {
             return addedDependencies;
+        }
+
+        public Set<System> getRemovedDependencies() {
+            return removedDependencies;
         }
     }
 }

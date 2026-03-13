@@ -15,6 +15,14 @@ public class SystemManager {
         graph.addOutboundEdges(system, new OutboundSystemDependencyPolicy(system));
 
         graph.getInboundVertices(system).forEach(system::onDependencyAdded);
+        system.init();
         graph.getOutboundVertices(system).forEach(outboundDependency -> outboundDependency.onDependencyAdded(system));
+    }
+
+    public void removeSystem(System system) {
+        graph.getOutboundVertices(system).forEach(outboundDependency -> outboundDependency.onDependencyRemoved(system));
+        system.init();
+
+        graph.removeVertex(system);
     }
 }
