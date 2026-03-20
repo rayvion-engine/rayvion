@@ -188,11 +188,11 @@ class SystemManagerTest {
     // Helper methods
     @SuppressWarnings("SameParameterValue")
     private SystemTraitCoordinate createTrait(String name, String version) {
-        return new SystemTraitCoordinate(name, Version.parse(version));
+        return new SystemTraitCoordinate("test", name, Version.parse(version));
     }
 
     private SystemDependency createDependency(SystemTraitCoordinate trait, SystemDependency.RequirementLevel level) {
-        SystemTraitRequirement requirement = new SystemTraitRequirement(trait.id(), v -> v.equals(trait.version()));
+        SystemTraitRequirement requirement = new SystemTraitRequirement(trait.namespaceId(), trait.id(), v -> v.equals(trait.version()));
         return new SystemDependency(requirement, level);
     }
 
@@ -317,7 +317,7 @@ class SystemManagerTest {
 
         public MockSystem(String name, Set<SystemDependency> dependencies, Set<SystemTraitCoordinate> provides) {
             this.descriptor = new SystemDescriptor(
-                new SystemCoordinate(name, Version.parse("1.0.0")),
+                new SystemCoordinate("test", name, Version.parse("1.0.0")),
                 dependencies,
                 provides
             );

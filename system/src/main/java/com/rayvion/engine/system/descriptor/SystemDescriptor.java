@@ -15,7 +15,7 @@ public record SystemDescriptor(
         this(coordinate, Set.of(), Set.of());
     }
 
-    public static SystemDescriptor fromCoordinate(String id, Version version) {
-        return new SystemDescriptor(new SystemCoordinate(id, version));
+    public static SystemDescriptor fromCoordinate(String namespaceId, String id, Version version) {
+        return new SystemDescriptor(new SystemCoordinate(namespaceId, id, version));
     }
 }

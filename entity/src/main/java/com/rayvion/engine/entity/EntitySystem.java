@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface EntitySystem extends System {
     @Override
     default SystemDescriptor getDescriptor() {
-        return SystemDescriptor.fromCoordinate("com.rayvion.engine:entity", Version.parse("0.1.0"));
+        return SystemDescriptor.fromCoordinate("com.rayvion.engine", "entity", Version.parse("0.1.0"));
     }
 
     Entity createEntity(UUID id);
