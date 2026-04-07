@@ -34,4 +34,32 @@ class StringHierarchyNamespaceFactoryTest {
         // split("") returns [""] in Java, which might be surprising but that's how it works with ""
         assertEquals(List.of(""), result.hierarchy());
     }
+    
+    @Test
+    void testParseMultipleDots() {
+        String input = "a..b";
+        HierarchyNamespace<String> result = StringHierarchyNamespaceFactory.parse(input);
+
+        assertNotNull(result);
+        assertEquals(List.of("a", "", "b"), result.hierarchy());
+    }
+
+    @Test
+    void testParseTrailingDots() {
+        String input = "a.b.";
+        HierarchyNamespace<String> result = StringHierarchyNamespaceFactory.parse(input);
+
+        assertNotNull(result);
+        // By default split() discards trailing empty strings
+        assertEquals(List.of("a", "b"), result.hierarchy());
+    }
+
+    @Test
+    void testParseLeadingDots() {
+        String input = ".a.b";
+        HierarchyNamespace<String> result = StringHierarchyNamespaceFactory.parse(input);
+
+        assertNotNull(result);
+        assertEquals(List.of("", "a", "b"), result.hierarchy());
+    }
 }
