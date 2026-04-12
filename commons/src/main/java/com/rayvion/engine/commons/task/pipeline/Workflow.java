@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class Workflow {
-    public static final Task<Object> ROOT_TASK = new Task<Object>(
+    public static final Task<Object> ROOT_TASK = new Task<>(
             new TaskDescriptor<>(
                     new TaskIdentity(StringHierarchyNamespaceFactory.parse(""), ""),
                     Set.of(),
