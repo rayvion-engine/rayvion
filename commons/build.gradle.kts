@@ -11,8 +11,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
-    implementation("org.apache.logging.log4j:log4j-api:2.25.3")
-    implementation("org.apache.logging.log4j:log4j-core:2.25.3")
+    implementation("org.apache.logging.log4j:log4j-api:2.25.4")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.4")
 
     api("org.jgrapht:jgrapht-core:1.5.2")
 
