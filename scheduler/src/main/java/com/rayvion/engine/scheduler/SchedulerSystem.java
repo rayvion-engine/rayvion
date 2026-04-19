@@ -1,7 +1,9 @@
 package com.rayvion.engine.scheduler;
 
+import com.github.zafarkhaja.semver.Version;
 import com.rayvion.engine.commons.task.pipeline.Workflow;
 import com.rayvion.engine.system.System;
+import com.rayvion.engine.system.trait.SystemTraitCoordinate;
 
 import java.util.Collection;
 
@@ -9,6 +11,7 @@ import java.util.Collection;
  * A System that manages scheduled workflows.
  */
 public interface SchedulerSystem extends System {
+    SystemTraitCoordinate TRAIT = new SystemTraitCoordinate("rayvion", "scheduler", Version.parse("1.0.0"));
 
     /**
      * Registers a scheduled workflow to be overseen by the system.

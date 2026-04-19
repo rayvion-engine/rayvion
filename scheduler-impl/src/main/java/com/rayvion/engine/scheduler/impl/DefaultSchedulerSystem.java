@@ -12,6 +12,7 @@ import com.rayvion.engine.system.descriptor.SystemDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,7 +28,11 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
     private boolean initialized = false;
 
     public DefaultSchedulerSystem() {
-        this(new SystemDescriptor(new SystemCoordinate("rayvion", "scheduler", Version.parse("1.0.0"))));
+        this(new SystemDescriptor(
+                new SystemCoordinate("rayvion", "scheduler", Version.parse("1.0.0")),
+                Set.of(),
+                Set.of(SchedulerSystem.TRAIT)
+        ));
     }
 
     public DefaultSchedulerSystem(SystemDescriptor descriptor) {
