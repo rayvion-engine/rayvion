@@ -1,40 +1,38 @@
 package com.rayvion.engine.entity;
 
-import com.rayvion.engine.entity.exceptions.EntityAlreadyExistsException;
-import lombok.RequiredArgsConstructor;
-
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class EntitySystemImpl implements EntitySystem {
-    private final AtomicInteger eidSerial = new AtomicInteger(0);
-    private final Set<Entity> entities = new HashSet<>();
+    private final AtomicLong nextId = new AtomicLong(0);
+    private final Set<Long> entities = ConcurrentHashMap.newKeySet();
 
     @Override
     public void init() {
-
     }
 
     @Override
-    public Entity createEntity(UUID id) throws EntityAlreadyExistsException {
-        if(entities.stream().anyMatch(e -> e.id().equals(id)))
-            throw new EntityAlreadyExistsException("Entity with id " + id + " already exists");
-
-        Integer eid = eidSerial.getAndIncrement();
-        Entity entity = new Entity(id, eid);
-
-        entities.add(entity);
-        return entity;
+    public Entity createEntity() {
+        long id = nextId.getAndIncrement();
+        entities.add(id);
+        return new Entity(id);
     }
 
     @Override
-    public Optional<Entity> removeEntity(UUID id) {
-        Optional<Entity> entity = entities.stream().filter(e -> e.id().equals(id)).findFirst();
-        entity.ifPresent(entities::remove);
-        return entity;
+    public boolean removeEntity(long id) {
+        return entities.remove(id);
+    }
+
+    @Override
+    public boolean hasEntity(long id) {
+        return entities.contains(id);
+    }
+
+    @Override
+    public Collection<Entity> getEntities() {
+        return entities.stream().map(Entity::new).collect(Collectors.toUnmodifiableSet());
     }
 }
