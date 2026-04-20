@@ -15,6 +15,7 @@ import com.rayvion.engine.system.descriptor.SystemDescriptor;
 import com.rayvion.engine.system.tick.TickSystem;
 import com.rayvion.engine.system.trait.SystemTraitCoordinate;
 import com.rayvion.engine.system.trait.SystemTraitRequirement;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Slf4j
 public class DefaultTickSystem implements TickSystem {
     private final SystemDescriptor descriptor;
     private final Map<Duration, TickGroup> groups = new ConcurrentHashMap<>();
@@ -124,7 +126,7 @@ public class DefaultTickSystem implements TickSystem {
                                 system.tick();
                             } catch (Exception e) {
                                 // Log error? For now just catch to not break other systems
-                                java.lang.System.err.println("Error ticking system: " + e.getMessage());
+                                log.error("Error ticking system: {}", e.getMessage(), e);
                             }
                         }
                         return CompletableFuture.completedFuture(null);

@@ -7,6 +7,7 @@ import com.rayvion.engine.system.descriptor.SystemCoordinate;
 import com.rayvion.engine.system.descriptor.SystemDescriptor;
 import com.rayvion.engine.system.manager.SystemManager;
 import com.rayvion.engine.system.trait.SystemTraitCoordinate;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Slf4j
 class TickSystemTest {
 
     @Test
@@ -38,8 +40,8 @@ class TickSystemTest {
         int count50 = system50ms.getTickCount();
         int count100 = system100ms.getTickCount();
         
-        System.out.println("Ticks (50ms): " + count50);
-        System.out.println("Ticks (100ms): " + count100);
+        log.info("Ticks (50ms): {}", count50);
+        log.info("Ticks (100ms): {}", count100);
         
         // At 500ms, 50ms should tick ~10 times, 100ms should tick ~5 times
         assertTrue(count50 >= 8, "50ms system should have ticked at least 8 times, got " + count50);
