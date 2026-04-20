@@ -3,7 +3,7 @@ package com.rayvion.engine.event.impl;
 import com.rayvion.engine.event.Event;
 import com.rayvion.engine.event.EventManager;
 import com.rayvion.engine.event.EventQueue;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-@Log4j2
+@Slf4j
 public class DefaultEventManager implements EventManager {
 
     private final Set<Class<? extends Event>> registeredEvents = ConcurrentHashMap.newKeySet();
