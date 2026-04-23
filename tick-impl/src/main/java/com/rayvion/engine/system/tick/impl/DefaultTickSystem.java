@@ -116,7 +116,7 @@ public class DefaultTickSystem implements TickSystem {
             Workflow workflow = new Workflow();
             Task<Void> tickTask = new Task<>(
                     new TaskDescriptor<>(
-                            new TaskIdentity(null, "tick-" + delay.toMillis()), // Identity might need a namespace but null is handled in some places
+                            new TaskIdentity(null, "tick-" + delay.toMillis()),
                             Set.of(),
                             Set.of()
                     ),
@@ -125,7 +125,6 @@ public class DefaultTickSystem implements TickSystem {
                             try {
                                 system.tick();
                             } catch (Exception e) {
-                                // Log error? For now just catch to not break other systems
                                 log.error("Error ticking system: {}", e.getMessage(), e);
                             }
                         }
