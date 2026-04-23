@@ -18,8 +18,7 @@ public class DefaultWorkflowExecution implements WorkflowExecution {
     private final ExecutorService executorService;
 
     private final Map<TaskDescriptor<?>, TaskExecutionStatus> statuses = new ConcurrentHashMap<>();
-    // Using a synchronized map to allow potential null values or general thread-safety if needed, 
-    // though values should realistically be non-null. Let's use Collections.synchronizedMap to be safe.
+
     private final Map<TaskDescriptor<?>, Object> results = Collections.synchronizedMap(new HashMap<>());
     
     private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
@@ -50,9 +49,6 @@ public class DefaultWorkflowExecution implements WorkflowExecution {
         for (Task<?> task : initialTasks) {
             evaluateAndSchedule(task);
         }
-        
-        // Also check any tasks that might have NO inbound edges at all in an edge case 
-        // (though workflow.addTask adds ROOT_TASK automatically).
     }
 
     @Override
@@ -62,11 +58,7 @@ public class DefaultWorkflowExecution implements WorkflowExecution {
 
     @Override
     public void await() {
-        try {
-            completionFuture.join();
-        } catch (CompletionException e) {
-            throw e;
-        }
+        completionFuture.join();
     }
 
     @Override
@@ -94,12 +86,11 @@ public class DefaultWorkflowExecution implements WorkflowExecution {
         for (TaskDependency dependency : descriptor.dependencies()) {
             List<Task<?>> satisfiers = inboundTasks.stream()
                     .filter(t -> dependency.isSatisfiedBy(t.descriptor()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (satisfiers.isEmpty()) {
                 if (dependency.requirementLevel() == TaskDependency.RequirementLevel.REQUIRED) {
                     allRequiredMet = false;
-                    // Missing required dependency from graph entirely
                     failedRequired.add(null); 
                 }
                 continue;

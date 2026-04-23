@@ -342,7 +342,6 @@ class SystemManagerTest {
 
         @Override
         public void init() {
-            // Not used in these tests
         }
 
         public int getDependencyAddedCount() {
