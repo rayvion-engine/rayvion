@@ -16,11 +16,11 @@ public class Dyn4jBodyWrapper implements PhysicsBody {
         this.entityId = entityId;
     }
 
-    @Override
     public void setMass(double mass) {
         if (!isStatic()) {
             dyn4jBody.setMass(MassType.NORMAL);
-            dyn4jBody.getMass().setMass(mass);
+            org.dyn4j.geometry.Mass m = dyn4jBody.getMass();
+            dyn4jBody.setMass(new org.dyn4j.geometry.Mass(m.getCenter(), mass, m.getInertia()));
         }
     }
 

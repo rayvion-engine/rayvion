@@ -58,4 +58,9 @@ public class GraphicsSystemImpl implements GraphicsSystem {
     public WorldGraphics getWorldGraphics() {
         return worldGraphics;
     }
+
+    @Override
+    public java.util.Set<Long> getEntitiesWithGraphics() {
+        return entityGraphicsMap.keySet();
+    }
 }
