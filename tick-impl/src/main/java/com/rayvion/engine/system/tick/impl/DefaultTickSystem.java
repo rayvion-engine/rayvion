@@ -13,7 +13,6 @@ import com.rayvion.engine.system.dependency.SystemDependency;
 import com.rayvion.engine.system.descriptor.SystemCoordinate;
 import com.rayvion.engine.system.descriptor.SystemDescriptor;
 import com.rayvion.engine.system.tick.TickSystem;
-import com.rayvion.engine.system.trait.SystemTraitCoordinate;
 import com.rayvion.engine.system.trait.SystemTraitRequirement;
 import lombok.extern.slf4j.Slf4j;
 

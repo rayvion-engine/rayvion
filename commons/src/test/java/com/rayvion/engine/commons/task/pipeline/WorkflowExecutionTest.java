@@ -11,12 +11,10 @@ import com.rayvion.engine.commons.task.pipeline.execution.WorkflowExecution;
 import com.rayvion.engine.commons.task.pipeline.execution.status.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WorkflowExecutionTest {
 
@@ -57,8 +55,8 @@ public class WorkflowExecutionTest {
         TaskExecutionStatus statusA = statuses.stream().filter(s -> s.getDescriptor().equals(taskA.descriptor())).findFirst().get();
         TaskExecutionStatus statusB = statuses.stream().filter(s -> s.getDescriptor().equals(taskB.descriptor())).findFirst().get();
 
-        assertTrue(statusA instanceof CompletedTaskStatus);
-        assertTrue(statusB instanceof CompletedTaskStatus);
+        assertInstanceOf(CompletedTaskStatus.class, statusA);
+        assertInstanceOf(CompletedTaskStatus.class, statusB);
     }
     
     @Test
@@ -89,7 +87,7 @@ public class WorkflowExecutionTest {
         TaskExecutionStatus statusA = statuses.stream().filter(s -> s.getDescriptor().equals(taskA.descriptor())).findFirst().get();
         TaskExecutionStatus statusC = statuses.stream().filter(s -> s.getDescriptor().equals(taskC.descriptor())).findFirst().get();
 
-        assertTrue(statusA instanceof FailedTaskStatus);
-        assertTrue(statusC instanceof CancelledTaskStatus);
+        assertInstanceOf(FailedTaskStatus.class, statusA);
+        assertInstanceOf(CancelledTaskStatus.class, statusC);
     }
 }
