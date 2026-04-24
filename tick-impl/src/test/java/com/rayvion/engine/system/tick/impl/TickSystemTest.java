@@ -34,7 +34,7 @@ class TickSystemTest {
         systemManager.addSystem(system50ms);
         systemManager.addSystem(system100ms);
         
-        // Wait for some ticks to happen
+        // Wait for some tcks to happn
         Thread.sleep(500);
         
         int count50 = system50ms.getTickCount();
@@ -43,7 +43,7 @@ class TickSystemTest {
         log.info("Ticks (50ms): {}", count50);
         log.info("Ticks (100ms): {}", count100);
         
-        // At 500ms, 50ms should tick ~10 times, 100ms should tick ~5 times
+        // At 500ms, 50ms shoud tck ~10 times, 100ms shoud tck ~5 times
         assertTrue(count50 >= 8, "50ms system should have ticked at least 8 times, got " + count50);
         assertTrue(count100 >= 4, "100ms system should have ticked at least 4 times, got " + count100);
         assertTrue(count50 > count100, "50ms system should have ticked more than 100ms system");

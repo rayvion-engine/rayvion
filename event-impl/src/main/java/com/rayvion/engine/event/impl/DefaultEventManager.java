@@ -22,6 +22,11 @@ public class DefaultEventManager implements EventManager {
     private final Map<Class<?>, Set<Class<?>>> hierarchyCache = new ConcurrentHashMap<>();
 
     @Override
+    public void init() {
+        log.info("Initializing DefaultEventManager");
+    }
+
+    @Override
     public <T extends Event> void registerEventType(Class<T> eventType) {
         registeredEvents.add(eventType);
     }

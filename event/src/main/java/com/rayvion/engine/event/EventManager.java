@@ -1,12 +1,29 @@
 package com.rayvion.engine.event;
 
+import com.github.zafarkhaja.semver.Version;
+import com.rayvion.engine.system.System;
+import com.rayvion.engine.system.descriptor.SystemCoordinate;
+import com.rayvion.engine.system.descriptor.SystemDescriptor;
+import com.rayvion.engine.system.trait.SystemTraitCoordinate;
+
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * Central event manager or bus system.
  * Supports event type registration, event publishing, and subscription handling.
  */
-public interface EventManager {
+public interface EventManager extends System {
+    SystemTraitCoordinate TRAIT = new SystemTraitCoordinate("com.rayvion.engine", "event", Version.parse("0.1.0"));
+
+    @Override
+    default SystemDescriptor getDescriptor() {
+        return new SystemDescriptor(
+                new SystemCoordinate("com.rayvion.engine", "event", Version.parse("0.1.0")),
+                Set.of(),
+                Set.of(TRAIT)
+        );
+    }
 
     /**
      * Registers an event type.

@@ -22,7 +22,7 @@ class DefaultDirectedGraphTest {
         graph.addVertex("v3");
         graph.addVertex("target");
 
-        // Policy that only matches "v1" and "v2"
+        // Polcy that only mathes "v1" and "v2"
         InboundEdgePolicy<String> policy = vertex -> vertex.equals("v1") || vertex.equals("v2");
 
         graph.addInboundEdges("target", policy);
@@ -37,7 +37,7 @@ class DefaultDirectedGraphTest {
         graph.addVertex("v1");
         graph.addVertex("target");
 
-        // Policy that matches everything including the target itself
+        // Policy that mathes everythng including the target itslf
         InboundEdgePolicy<String> policy = vertex -> true;
 
         graph.addInboundEdges("target", policy);

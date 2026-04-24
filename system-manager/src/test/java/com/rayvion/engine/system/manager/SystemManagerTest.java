@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -185,7 +186,7 @@ class SystemManagerTest {
         assertTrue(system2.getAddedDependencies().contains(system1));
     }
 
-    // Helper methods
+    // Helpr methds
     @SuppressWarnings("SameParameterValue")
     private SystemTraitCoordinate createTrait(String name, String version) {
         return new SystemTraitCoordinate("test", name, Version.parse(version));
@@ -307,13 +308,69 @@ class SystemManagerTest {
         assertEquals(2, consumer.getDependencyAddedCount());
     }
 
-    // Mock System implementation for testing
+    @Test
+    @DisplayName("Should call init when adding a system")
+    void testInitIsCalledOnAddSystem() {
+        MockSystem system = new MockSystem("test", Set.of(), Set.of());
+        assertFalse(system.isInitialized());
+        
+        systemManager.addSystem(system);
+        assertTrue(system.isInitialized());
+    }
+
+    @Test
+    @DisplayName("Should return system when getSystem is called with exact class")
+    void testGetSystemWhenExists() {
+        MockSystem system = new MockSystem("test", Set.of(), Set.of());
+        systemManager.addSystem(system);
+        
+        assertTrue(systemManager.getSystem(MockSystem.class).isPresent());
+        assertEquals(system, systemManager.getSystem(MockSystem.class).get());
+    }
+
+    @Test
+    @DisplayName("Should return empty when getSystem is called with non-existent class")
+    void testGetSystemWhenDoesNotExist() {
+        assertFalse(systemManager.getSystem(MockSystem.class).isPresent());
+    }
+
+    @Test
+    @DisplayName("Should return system when getSystem is called with interface")
+    void testGetSystemByInterface() {
+        MockSystem system = new MockSystem("test", Set.of(), Set.of());
+        systemManager.addSystem(system);
+        
+        assertTrue(systemManager.getSystem(System.class).isPresent());
+        assertEquals(system, systemManager.getSystem(System.class).get());
+    }
+
+    @Test
+    @DisplayName("Should throw IllegalArgumentException when removing a system not in the graph")
+    void testRemoveNonExistentSystem() {
+        MockSystem system = new MockSystem("test", Set.of(), Set.of());
+        assertThrows(IllegalArgumentException.class, () -> systemManager.removeSystem(system));
+    }
+
+    @Test
+    @DisplayName("Should return first found system when multiple instances of same type exist")
+    void testGetSystemWithMultipleInstances() {
+        MockSystem system1 = new MockSystem("test1", Set.of(), Set.of());
+        MockSystem system2 = new MockSystem("test2", Set.of(), Set.of());
+        systemManager.addSystem(system1);
+        systemManager.addSystem(system2);
+
+        Optional<MockSystem> found = systemManager.getSystem(MockSystem.class);
+        assertTrue(found.isPresent());
+    }
+
+    // Mck Systm implemntation for testng
     private static class MockSystem implements System {
         private final SystemDescriptor descriptor;
         private final Set<System> addedDependencies = new HashSet<>();
         private final Set<System> removedDependencies = new HashSet<>();
         private int dependencyAddedCount = 0;
         private int dependencyRemovedCount = 0;
+        private boolean initialized = false;
 
         public MockSystem(String name, Set<SystemDependency> dependencies, Set<SystemTraitCoordinate> provides) {
             this.descriptor = new SystemDescriptor(
@@ -342,6 +399,7 @@ class SystemManagerTest {
 
         @Override
         public void init() {
+            initialized = true;
         }
 
         public int getDependencyAddedCount() {
@@ -350,6 +408,10 @@ class SystemManagerTest {
 
         public int getDependencyRemovedCount() {
             return dependencyRemovedCount;
+        }
+
+        public boolean isInitialized() {
+            return initialized;
         }
 
         public Set<System> getAddedDependencies() {

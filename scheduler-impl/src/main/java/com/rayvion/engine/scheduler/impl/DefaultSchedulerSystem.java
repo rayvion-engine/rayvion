@@ -19,6 +19,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Default implementation of the {@link SchedulerSystem}.
+ * <p>
+ * This implementation uses a {@link ScheduledExecutorService} to manage the timing and execution
+ * of workflows. It maintains internal maps to track the status and active execution handles
+ * of all registered workflows.
+ * </p>
+ */
 public class DefaultSchedulerSystem implements SchedulerSystem {
     private final SystemDescriptor descriptor;
     private final ScheduledExecutorService executorService;
@@ -27,6 +35,9 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
     
     private boolean initialized = false;
 
+    /**
+     * Creates a new {@code DefaultSchedulerSystem} with a default descriptor.
+     */
     public DefaultSchedulerSystem() {
         this(new SystemDescriptor(
                 new SystemCoordinate("rayvion", "scheduler", Version.parse("1.0.0")),
@@ -35,22 +46,38 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
         ));
     }
 
+    /**
+     * Creates a new {@code DefaultSchedulerSystem} with the specified descriptor.
+     *
+     * @param descriptor the system descriptor to use
+     */
     public DefaultSchedulerSystem(SystemDescriptor descriptor) {
         this.descriptor = descriptor;
         this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SystemDescriptor getDescriptor() {
         return descriptor;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
         if (initialized) return;
         initialized = true;
     }
 
+    /**
+     * Executes the given scheduled workflow and updates its status.
+     *
+     * @param scheduledWorkflow the workflow to run
+     */
     private void runWorkflow(ScheduledWorkflow scheduledWorkflow) {
         try {
             statuses.put(scheduledWorkflow, ScheduledWorkflow.Status.RUNNING);
@@ -70,6 +97,9 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void register(ScheduledWorkflow workflow) {
         if (activeExecutions.containsKey(workflow)) {
@@ -91,6 +121,9 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
         activeExecutions.put(workflow, future);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScheduledWorkflow schedule(Workflow workflow, Schedule schedule) {
         ScheduledWorkflow scheduledWorkflow = new ScheduledWorkflow(workflow, schedule);
@@ -98,6 +131,9 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
         return scheduledWorkflow;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unregister(ScheduledWorkflow workflow) {
         ScheduledFuture<?> future = activeExecutions.remove(workflow);
@@ -107,11 +143,17 @@ public class DefaultSchedulerSystem implements SchedulerSystem {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScheduledWorkflow.Status getStatus(ScheduledWorkflow workflow) {
         return statuses.get(workflow);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<ScheduledWorkflow> getManagedWorkflows() {
         return Collections.unmodifiableSet(activeExecutions.keySet());

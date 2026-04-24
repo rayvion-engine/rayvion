@@ -99,7 +99,7 @@ class DefaultEventManagerTest {
 
         eventManager.publish(new OtherEvent());
 
-        // The second subscriber should still be called despite the first one throwing an exception
+        // The second subscribr shoud stll be calld despite the frist one throwng an excepton
         assertEquals(1, count.get());
     }
 }

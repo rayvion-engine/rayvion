@@ -10,6 +10,9 @@ import java.time.Duration;
  * A tickable system should provide the {@link #TRAIT} trait in its descriptor.
  */
 public interface Tickable extends System {
+    /**
+     * The coordinate of the tickable trait.
+     */
     SystemTraitCoordinate TRAIT = new SystemTraitCoordinate("rayvion", "tickable", Version.parse("1.0.0"));
 
     /**
