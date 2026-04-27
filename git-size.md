@@ -1,1 +1,1 @@
-{"schemaVersion":1,"label":"size","message":"63KB","color":"f1502f","namedLogo":"git"}
+{"schemaVersion":1,"label":"size","message":"18MB","color":"f1502f","namedLogo":"git"}
